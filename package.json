@@ -17,7 +17,7 @@
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm"
   },
   "devDependencies": {
-    "@types/node": "^20.12.7",
+    "@types/node": "20.12.7",
     "@typescript-eslint/eslint-plugin": "6.7.0",
     "@typescript-eslint/parser": "6.7.0",
     "eslint": "8.49.0",
