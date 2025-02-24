@@ -1,12 +1,11 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
-
 import { FileReader } from './file-reader.interface.js';
 import { City, Comfort, Coordinates, HouseType, Offer } from '../../types/index.js';
 
-export class TSVFileReader extends EventEmitter implements FileReader {
-  private CHUNK_SIZE = 16384; // 16KB
+const CHUNK_SIZE = 16384; // 16KB
 
+export class TSVFileReader extends EventEmitter implements FileReader {
   constructor(
     private readonly filename: string
   ) {
@@ -69,7 +68,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
 
   public async read(): Promise<void> {
     const readStream = createReadStream(this.filename, {
-      highWaterMark: this.CHUNK_SIZE,
+      highWaterMark: CHUNK_SIZE,
       encoding: 'utf-8',
     });
 
