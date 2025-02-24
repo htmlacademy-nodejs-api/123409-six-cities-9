@@ -1,0 +1,86 @@
+{
+  "api": {
+    "titles": [
+      "Luxurious apartment in the heart of Paris",
+      "Cozy studio near Central Park",
+      "Modern villa with sea view",
+      "Historic townhouse in old town",
+      "Penthouse with panoramic city views",
+      "Charming cottage in countryside"
+    ],
+    "descriptions": [
+      "This stunning property offers breathtaking views and features modern amenities throughout. Perfect for families or business travelers.",
+      "A beautifully designed space with all necessary comforts. Close to major attractions and public transport.",
+      "Enjoy the perfect blend of luxury and comfort in this exceptional property with high-end furnishings.",
+      "Experience authentic living in this carefully restored property. Located in a quiet yet central area.",
+      "Ultimate luxury living with spectacular views. Premium furnishings and state-of-the-art amenities included.",
+      "Escape to this peaceful retreat surrounded by nature. Perfect for a relaxing getaway."
+    ],
+    "cities": [
+      "Paris",
+      "Amsterdam",
+      "Hamburg",
+      "Brussels",
+      "Cologne",
+      "Dusseldorf"
+    ],
+    "previewImages": [
+      "https://example.com/preview1.jpg",
+      "https://example.com/preview2.jpg",
+      "https://example.com/preview3.jpg",
+      "https://example.com/preview4.jpg",
+      "https://example.com/preview5.jpg",
+      "https://example.com/preview6.jpg"
+    ],
+    "images": [
+      ["image1.jpg", "image2.jpg", "image3.jpg", "image4.jpg", "image5.jpg", "image6.jpg"],
+      ["image7.jpg", "image8.jpg", "image9.jpg", "image10.jpg", "image11.jpg", "image12.jpg"],
+      ["image13.jpg", "image14.jpg", "image15.jpg", "image16.jpg", "image17.jpg", "image18.jpg"],
+      ["image19.jpg", "image20.jpg", "image21.jpg", "image22.jpg", "image23.jpg", "image24.jpg"],
+      ["image25.jpg", "image26.jpg", "image27.jpg", "image28.jpg", "image29.jpg", "image30.jpg"],
+      ["image31.jpg", "image32.jpg", "image33.jpg", "image34.jpg", "image35.jpg", "image36.jpg"]
+    ],
+    "types": [
+      "apartment",
+      "house",
+      "room",
+      "hotel"
+    ],
+    "comforts": [
+      "Breakfast",
+      "Air conditioning",
+      "Laptop friendly workspace",
+      "Baby seat",
+      "Washer",
+      "Towels",
+      "Fridge",
+      "Coffee machine",
+      "Dishwasher",
+      "Cable TV"
+    ],
+    "coordinates": [
+      [48.85661, 2.351499],
+      [52.370216, 4.895168],
+      [53.550341, 10.000654],
+      [50.850346, 4.351721],
+      [50.937531, 6.960279],
+      [51.227741, 6.773456]
+    ],
+    "hosts": [
+      "user123",
+      "host456",
+      "superhost789",
+      "host101",
+      "user202",
+      "host303"
+    ],
+    "dates": [
+      "2024-03-15T12:00:00.000Z",
+      "2024-03-14T10:30:00.000Z",
+      "2024-03-13T15:45:00.000Z",
+      "2024-03-12T09:15:00.000Z",
+      "2024-03-11T14:20:00.000Z",
+      "2024-03-10T11:00:00.000Z"
+    ]
+   }
+}
