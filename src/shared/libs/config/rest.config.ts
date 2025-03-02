@@ -1,24 +1,26 @@
 import { Logger } from '../logger/index.js';
 import { Config } from './config.interface.js';
-import { DotenvParseOutput, config } from 'dotenv';
+import { config } from 'dotenv';
+import { RestSchema, restSchema } from './rest.schema.js';
 
-export class RestConfig implements Config {
-  private readonly config: NodeJS.ProcessEnv;
+export class RestConfig implements Config<RestSchema> {
+  private readonly config: RestSchema;
 
-  constructor(
-    private readonly logger: Logger
-  ) {
+  constructor(private readonly logger: Logger) {
     const parsedOutput = config();
 
     if (parsedOutput.error) {
       throw new Error('Failed to parse .env file');
     }
 
-    this.config = <DotenvParseOutput>parsedOutput.parsed;
+    restSchema.load({});
+    restSchema.validate({ allowed: 'strict', output: this.logger.info });
+
+    this.config = restSchema.getProperties();
     this.logger.info('.env file found and successfully parsed!');
   }
 
-  public get(key: string): string | undefined {
+  public get<T extends keyof RestSchema>(key: T): RestSchema[T] {
     return this.config[key];
   }
 }
