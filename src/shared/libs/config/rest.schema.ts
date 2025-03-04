@@ -5,6 +5,8 @@ convict.addFormats(validator);
 
 export type RestSchema = {
     PORT: number;
+    SALT: string | null;
+    DB_HOST: string;
 }
 
 
