@@ -37,13 +37,13 @@ export const restSchema = convict({
     doc: 'Username to connect to the database',
     format: String,
     env: 'DB_USER',
-    default: null,
+    default: 'admin',
   },
   DB_PASSWORD: {
     doc: 'Password to connect to the database',
     format: String,
     env: 'DB_PASSWORD',
-    default: null,
+    default: 'test',
   },
   DB_PORT: {
     doc: 'Port to connect to the database (MongoDB)',
@@ -55,6 +55,6 @@ export const restSchema = convict({
     doc: 'Database name (MongoDB)',
     format: String,
     env: 'DB_NAME',
-    default: 'buy-and-sell'
+    default: 'six-cities'
   }
 });
