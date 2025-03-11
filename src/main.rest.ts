@@ -4,10 +4,11 @@ import { Container } from 'inversify';
 import { Application, createRestApplicationContainer } from './rest/index.js';
 import { Component } from './shared/types/index.js';
 import { createUserContainer } from './shared/modules/user/index.js';
+import { createOfferContainer } from './shared/modules/offer/index.js';
 
 
 function bootstrap() {
-  const appContainer = Container.merge(createRestApplicationContainer(), createUserContainer());
+  const appContainer = Container.merge(createRestApplicationContainer(), createUserContainer(), createOfferContainer());
   const application = appContainer.get<Application>(Component.Application);
 
   application.init();
