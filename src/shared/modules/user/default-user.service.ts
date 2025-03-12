@@ -24,6 +24,10 @@ export class DefaultUserService implements UserService {
     return result as DocumentType<UserEntity>;
   }
 
+  public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
+    return this.userModel.findById(userId).exec() as Promise<DocumentType<UserEntity> | null>;
+  }
+
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
     return this.userModel.findOne({ email });
   }
