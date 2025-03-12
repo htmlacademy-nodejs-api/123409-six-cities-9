@@ -11,6 +11,6 @@ export type MockServerData = {
   types: HouseType[];
   comforts: Comfort[];
   coordinates: [number, number][];
-  hosts: string[];
+  users: string[];
   dates: string[];
 };

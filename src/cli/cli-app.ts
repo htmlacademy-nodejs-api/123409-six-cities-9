@@ -1,8 +1,10 @@
 import { CommandParser } from './command-parser.js';
 import { Command } from './commands/command.interface.js';
+import { injectable } from 'inversify';
 
 type CommandCollection = Record<string, Command>;
 
+@injectable()
 export class CLIApplication {
   private commands: CommandCollection = {};
 

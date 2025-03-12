@@ -15,6 +15,6 @@ export class CreateOfferDto {
   public maxAdults: number;
   public price: number;
   public comforts: Comfort[];
-  public host: string;
+  public userId: string;
   public commentsCount: number;
 }

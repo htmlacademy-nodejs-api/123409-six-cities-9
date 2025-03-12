@@ -53,10 +53,7 @@
       "Baby seat",
       "Washer",
       "Towels",
-      "Fridge",
-      "Coffee machine",
-      "Dishwasher",
-      "Cable TV"
+      "Fridge"
     ],
     "coordinates": [
       [48.85661, 2.351499],
@@ -66,13 +63,49 @@
       [50.937531, 6.960279],
       [51.227741, 6.773456]
     ],
-    "hosts": [
-      "user123",
-      "host456",
-      "superhost789",
-      "host101",
-      "user202",
-      "host303"
+    "users": [
+      {
+        "name": "user123",
+        "email": "user123@gmail.com",
+        "avatarPath": "user123.jpg",
+        "type": "regular"
+      },
+      {
+        "name": "host456",
+        "email": "host456@gmail.com",
+        "avatarPath": "host456.jpg",
+        "type": "pro"
+      },
+      {
+        "name": "superhost789",
+        "email": "superhost789@gmail.com",
+        "avatarPath": "superhost789.jpg",
+        "type": "pro"
+      },
+      {
+        "name": "host101",
+        "email": "host101@gmail.com",
+        "avatarPath": "host101.jpg",
+        "type": "pro"
+      },
+      {
+        "name": "user202",
+        "email": "user202@gmail.com",
+        "avatarPath": "user202.jpg",
+        "type": "regular"
+      },
+      {
+        "name": "host303",
+        "email": "host303@gmail.com",
+        "avatarPath": "host303.jpg",
+        "type": "pro"
+      },
+      {
+        "name": "user404",
+        "email": "user404@gmail.com",
+        "avatarPath": "user404.jpg",
+        "type": "regular"
+      }
     ],
     "dates": [
       "2024-03-15T12:00:00.000Z",
