@@ -33,15 +33,14 @@ export class ImportCommand implements Command {
   }
 
   private async saveOffer(offer: Offer) {
+    const { user: userData, ...offerData } = offer;
+
     const user = await this.userService.findOrCreate({
-      ...offer.user,
+      ...userData,
       password: DEFAULT_USER_PASSWORD
     }, this.salt);
 
     this.logger.info(JSON.stringify(user));
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { user: _, ...offerData } = offer;
 
     await this.offerService.create({
       userId: user.id,

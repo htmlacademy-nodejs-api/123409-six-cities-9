@@ -6,6 +6,7 @@ import { UserEntity } from './user.entity.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
+import { HttpError } from '../../libs/errors/http.error.js';
 
 @injectable()
 export class DefaultUserService implements UserService {
@@ -24,21 +25,33 @@ export class DefaultUserService implements UserService {
     return result as DocumentType<UserEntity>;
   }
 
-  public async findById(userId: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findById(userId).exec() as Promise<DocumentType<UserEntity> | null>;
+  public async findById(userId: string): Promise<DocumentType<UserEntity>> {
+    const user = await this.userModel.findById(userId).exec();
+    if (!user) {
+      throw new HttpError(404, `User with id ${userId} not found`);
+    }
+    return user as DocumentType<UserEntity>;
   }
 
-  public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findOne({ email });
+  public async findByEmail(email: string): Promise<DocumentType<UserEntity>> {
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new HttpError(404, `User with email ${email} not found`);
+    }
+    return user as DocumentType<UserEntity>;
   }
 
   public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
-    const existedUser = await this.findByEmail(dto.email);
+    try {
+      const existedUser = await this.findByEmail(dto.email);
 
-    if (existedUser) {
-      return existedUser;
+      if (existedUser) {
+        return existedUser;
+      }
+
+      return this.create(dto, salt);
+    } catch (error) {
+      throw new HttpError(500, 'Internal Server Error');
     }
-
-    return this.create(dto, salt);
   }
 }
