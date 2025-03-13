@@ -10,7 +10,6 @@ export interface UserEntity extends defaultClasses.Base {}
     timestamps: true,
   }
 })
-
 export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({ required: true, minlength: [2, 'Min length for firstname is 2'] })
   public name: string;
