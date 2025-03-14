@@ -11,3 +11,5 @@ plugins:
 extends:
   - "plugin:@typescript-eslint/recommended"
   - "htmlacademy/node"
+rules:
+  "@typescript-eslint/no-unsafe-declaration-merging": "off"

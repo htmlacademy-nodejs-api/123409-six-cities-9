@@ -1,6 +1,7 @@
 import { City, Coordinates } from './city.enum.js';
 import { Comfort } from './comfort.enum.js';
 import { HouseType } from './house-type.enum.js';
+import { User } from './user.interface.js';
 
 
 export type Offer = {
@@ -18,7 +19,7 @@ export type Offer = {
     maxAdults: number;
     price: number;
     comforts: Comfort[];
-    host: string;
+    user: User;
     commentsCount: number;
     coordinates: Coordinates;
 }
