@@ -31,7 +31,7 @@ export class DefaultOfferService implements OfferService {
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity>> {
     try {
-      const offer = await this.offerModel.findById(offerId).exec();
+      const offer = await this.offerModel.findById(offerId).populate(['userId']).exec();
       if (!offer) {
         throw new HttpError(HttpCode.NOT_FOUND, `Offer with id ${offerId} not found`);
       }
@@ -49,6 +49,26 @@ export class DefaultOfferService implements OfferService {
   }
 
   public async find(): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.find();
+    return this.offerModel.find().exec();
+  }
+
+  public async deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+    return this.offerModel
+      .findByIdAndDelete(offerId)
+      .exec();
+  }
+
+  public async updateById(offerId: string, dto: CreateOfferDto): Promise<DocumentType<OfferEntity> | null> {
+    return this.offerModel
+      .findByIdAndUpdate(offerId, dto, {new: true})
+      .populate(['userId'])
+      .exec();
+  }
+
+  public async incCommentsCount(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+    return this.offerModel
+      .findByIdAndUpdate(offerId, {'$inc': {
+        commentsCount: 1,
+      }}).exec();
   }
 }
