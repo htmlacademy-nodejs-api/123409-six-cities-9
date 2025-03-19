@@ -47,4 +47,8 @@ export class DefaultOfferService implements OfferService {
       );
     }
   }
+
+  public async find(): Promise<DocumentType<OfferEntity>[]> {
+    return this.offerModel.find();
+  }
 }
