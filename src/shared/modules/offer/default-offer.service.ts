@@ -2,7 +2,7 @@ import { inject, injectable } from 'inversify';
 import { DocumentType, types } from '@typegoose/typegoose';
 
 import { OfferService } from './offer-service.interface.js';
-import { Component } from '../../types/index.js';
+import { City, Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
@@ -91,10 +91,13 @@ export class DefaultOfferService implements OfferService {
       .exec();
   }
 
-  public async incCommentsCount(offerId: string): Promise<DocumentType<OfferEntity> | null> {
+  public async findPremiumByCity(
+    city: City,
+  ): Promise<types.DocumentType<OfferEntity>[]> {
     return this.offerModel
-      .findByIdAndUpdate(offerId, {'$inc': {
-        commentsCount: 1,
-      }}).exec();
+      .find({ city, isPremium: true })
+      .sort({ createdAt: SortType.Down })
+      .limit(DEFAULT_OFFER_COUNT)
+      .populate(['userId']);
   }
 }
