@@ -7,6 +7,8 @@ import { Logger } from '../../libs/logger/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
 import { HttpError, HttpCode } from '../../libs/errors/http.error.js';
+import { SortType } from '../../types/sort.enum.js';
+import { DEFAULT_OFFER_COUNT } from './offer.constants.js';
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -48,8 +50,32 @@ export class DefaultOfferService implements OfferService {
     }
   }
 
-  public async find(): Promise<DocumentType<OfferEntity>[]> {
-    return this.offerModel.find().exec();
+  public async find(count?: number, sortType?: SortType): Promise<DocumentType<OfferEntity>[]> {
+    const limit = count ?? DEFAULT_OFFER_COUNT;
+    const sort = sortType ?? SortType.Down;
+
+    return this.offerModel.aggregate([
+      {
+        $lookup: {
+          from: 'comments',
+          let: { offerId: '$_id' },
+          pipeline: [
+            { $match: { offer: '$$offerId' } },
+            { $project: { rating: 1 } },
+          ],
+          as: 'comments',
+        },
+      },
+      {
+        $addFields: {
+          id: { $toString: '$_id' },
+          commentsCount: { $size: '$comments' },
+          rating: { $avg: '$comments.rating' },
+        },
+      },
+      { $limit: limit },
+      { $sort: { createdAt: sort } },
+    ]);
   }
 
   public async deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null> {
