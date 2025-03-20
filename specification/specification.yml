@@ -1,0 +1,596 @@
+openapi: 3.0.1
+info:
+  title: API сервер для проекта «Шесть городов».
+  description: |-
+    * Список ресурсов и маршрутов сервера «Шесть городов».
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 2.0.0
+tags:
+  - name: offers
+    description: Действия с объявлениями.
+  - name: comments
+    description: Действия с комментариями.
+  - name: users
+    description: Действия с пользователем.
+paths:
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Регистрация пользователя
+      description: Регистрирует нового пользователя.
+
+      requestBody:
+        description: Информация для создания нового пользователя.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createUser"
+        required: true
+
+      responses:
+        "201":
+          description: Пользователь зарегистрирован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+
+        "409":
+          description: Пользователь с таким email уже существует.
+
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Авторизация пользователя
+      description: Авторизует пользователя на основе логина и пароля
+
+      requestBody:
+        description: Информация для авторизации пользователя.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "201":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+        "401":
+          description: Неверный логин или пароль.
+    get:
+      tags:
+        - users
+      summary: Проверка состояния пользователя
+      description: Возвращает информацию по авторизованному пользователю
+      responses:
+        "201":
+          description: Пользователь авторизован. Объект пользователя.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/user"
+
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Выход из системы
+      description: Выходит из системы текущего пользователя
+      responses:
+        "200":
+          description: Пользователь вышел из системы.
+
+  /users/{userId}/avatar:
+    post:
+      tags:
+        - users
+      summary: Загрузить изображение аватара
+      description: Загружает изображение аватара пользователя. Изображение
+        аватара должно быть в формате `png` или `jpg`.
+      requestBody:
+        description: Изображение аватара.
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                avatar:
+                  type: string
+
+      responses:
+        "200":
+          description: Изображение аватара загружено.
+        "404":
+          description: Пользователь с указанным userId не найден.
+    
+  /offers:
+    post:
+      tags:
+        - offers
+      summary: Создать предложение
+      description: Создает новое предложение по аренде.
+
+      requestBody:
+        description: Информация для создания нового предложения.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createOffer"
+      
+      responses:
+        "201":
+          description: Предложение зарегистрировано. Объект предложения.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/offer"
+        "401":
+          description: Пользователь не авторизован.
+
+    get:
+      tags:
+        - offers
+      summary: Получить все предложения
+      description: Возвращает все предложения.
+      parameters:
+        - name: sortDate
+          in: query
+          required: false
+          description: Сортировка по дате (asc или desc)
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: perPage
+          in: query
+          required: false
+          description: Количество элементов на странице
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+        - name: page
+          in: query
+          required: false
+          description: Номер страницы
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+      responses:
+        "200":
+          description: Результаты поиска по запросу. 
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/offer"
+        "404":
+          description: Не можем найти запрошенный ресурс.
+
+  /offers/{offerId}:
+    get:
+      tags:
+        - offers
+      summary: Получить предложение по id
+      description: Возвращает предложение по id.
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: ID предложения
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Предложение найдено.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/offer"
+    patch:
+      tags:
+        - offers
+      summary: Обновить предложение
+      description: Обновляет предложение по id. 
+      requestBody:
+        description: Информация для обновления предложения.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/createOffer"
+      responses:
+        "200":
+          description: Предложение обновлено.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/offer"
+        "401":
+          description: Пользователь не авторизован.
+        "404":
+          description: Предложение не найдено.
+    delete:
+      tags:
+        - offers
+      summary: Удалить предложение
+      description: Удаляет предложение по id.
+      responses:
+        "200":
+          description: Предложение удалено.
+        "401":
+          description: Пользователь не авторизован.
+        "404":
+          description: Предложение не найдено.
+
+  /offers/{offerId}/comments:
+    post:
+      tags:
+        - comments
+      summary: Создать комментарий
+      description: Создает новый комментарий.
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: ID предложения
+          schema:
+            type: string
+      requestBody:
+        description: Информация для создания нового комментария.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/comment"
+      responses:
+        "201":
+          description: Комментарий зарегистрирован. Объект комментария.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/comment"
+                  - type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "6329c3d6a04ab1061c6425ea"
+                      date:
+                        type: string
+                        format: date-time
+                        example: "2024-01-01T12:00:00.000Z"
+    get:
+      tags:
+        - comments
+      summary: Получить комментарии
+      description: Возвращает все комментарии.
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: ID предложения
+          schema:
+            type: string
+        - name: sortDate
+          in: query
+          required: false
+          description: Сортировка по дате (asc или desc)
+          schema:
+            type: string
+            enum: [asc, desc]
+        - name: perPage
+          in: query
+          required: false
+          description: Количество элементов на странице
+          schema:
+            type: integer
+            minimum: 1
+            default: 10
+        - name: page
+          in: query
+          required: false
+          description: Номер страницы
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+      responses:
+        "200":
+          description: Комментарии найдены.
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/comment"
+                  - type: object
+                    properties:
+                      id:
+                        type: string
+                        example: "6329c3d6a04ab1061c6425ea"
+                      date:
+                        type: string
+                        format: date-time
+                        example: "2024-01-01T12:00:00.000Z"
+
+
+
+
+components:
+  schemas:
+    createUser:
+      type: object
+
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@test.ru
+
+        name:
+          type: string
+          minLength: 1
+          maxLength: 15
+          example: Firstname Lastname
+
+        password:
+          type: string
+          minLength: 6
+          maxLength: 12
+          example: 123456
+
+        avatar:
+          type: string
+
+        type:
+          type: string
+          enum:
+            - regular
+            - pro
+
+    user:
+      type: object
+
+      properties:
+        email:
+          type: string
+          format: email
+          example: test@test.ru
+
+        name:
+          type: string
+          minLength: 1
+          maxLength: 15
+          example: Firstname Lastname
+
+        avatar:
+          type: string
+
+        type:
+          type: string
+          enum:
+            - regular
+            - pro
+
+        token:
+          type: string
+
+    createOffer:
+      type: object
+      required:
+        - title
+        - description
+        - city
+        - previewImage
+        - images
+        - isPremium
+        - type
+        - bedrooms
+        - maxAdults
+        - price
+        - comforts
+        - coordinates
+
+      properties:
+        title:
+          type: string  
+          minLength: 10
+          maxLength: 100
+          example: "Квартира в центре города"
+
+        description:
+          type: string
+          minLength: 10
+          maxLength: 1024
+          example: "Описание квартиры"
+
+        city:
+          type: string
+          example: "Paris"
+
+        previewImage:
+          type: string
+          format: uri
+          example: "https://example.com/image.jpg"
+
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 1
+          maxItems: 6
+          example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+
+        isPremium:
+          type: boolean
+          example: false
+
+        type:
+          type: string
+          enum: ["apartment", "house", "room", "hotel"]
+          example: "apartment"
+
+        bedrooms:
+          type: integer
+          minimum: 1
+          maximum: 8
+          example: 2
+
+        maxAdults:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 2
+
+        price:
+          type: number
+          minimum: 100
+          maximum: 100000
+          example: 1000
+
+        comforts:
+          type: array
+          items:
+            type: string
+          example: ["Breakfast", "Air conditioning", "Laptop friendly workspace"]
+
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 48.85661
+            longitude:
+              type: number
+              example: 2.35222
+          required:
+            - latitude
+            - longitude
+
+    offer:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "6329c3d6a04ab1061c6425ea"
+
+        title:
+          type: string  
+          minLength: 10
+          maxLength: 100
+          example: "Квартира в центре города"
+
+        description:
+          type: string
+          minLength: 10
+          maxLength: 1024
+          example: "Описание квартиры"
+
+        date:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00.000Z"
+
+        city:
+          type: string
+          example: "Paris"
+
+        previewImage:
+          type: string
+          format: uri
+          example: "https://example.com/image.jpg"
+
+        images:
+          type: array
+          items:
+            type: string
+            format: uri
+          minItems: 1
+          maxItems: 6
+          example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
+
+        isPremium:
+          type: boolean
+          example: false
+
+        isFavorite:
+          type: boolean
+          example: false
+
+        rating:
+          type: number
+          minimum: 1
+          maximum: 5
+          example: 4.5
+
+        type:
+          type: string
+          enum: ["apartment", "house", "room", "hotel"]
+          example: "apartment"
+
+        bedrooms:
+          type: integer
+          minimum: 1
+          maximum: 8
+          example: 2
+
+        maxAdults:
+          type: integer
+          minimum: 1
+          maximum: 10
+          example: 2
+
+        price:
+          type: number
+          minimum: 100
+          maximum: 100000
+          example: 1000
+
+        comforts:
+          type: array
+          items:
+            type: string
+          example: ["Breakfast", "Air conditioning", "Laptop friendly workspace"]
+
+        user:
+          type: string
+
+        commentsCount:
+          type: integer
+          minimum: 0
+          example: 5
+
+        coordinates:
+          type: object
+          properties:
+            latitude:
+              type: number
+              example: 48.85661
+            longitude:
+              type: number
+              example: 2.35222
+          required:
+            - latitude
+            - longitude
+
+    comment:
+      type: object
+      properties:
+        text:
+          type: string
+        rating:
+          type: number
+        user:
+          type: string
