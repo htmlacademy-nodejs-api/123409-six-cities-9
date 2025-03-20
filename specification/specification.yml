@@ -27,7 +27,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/createUser"
+              $ref: "#/components/schemas/CreateUser"
         required: true
 
       responses:
@@ -36,7 +36,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/user"
+                $ref: "#/components/schemas/User"
 
         "409":
           description: Пользователь с таким email уже существует.
@@ -66,7 +66,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/user"
+                $ref: "#/components/schemas/User"
         "401":
           description: Неверный логин или пароль.
     get:
@@ -80,7 +80,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/user"
+                $ref: "#/components/schemas/User"
 
   /users/logout:
     post:
@@ -99,6 +99,13 @@ paths:
       summary: Загрузить изображение аватара
       description: Загружает изображение аватара пользователя. Изображение
         аватара должно быть в формате `png` или `jpg`.
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          description: ID пользователя
+          schema:
+            type: string  
       requestBody:
         description: Изображение аватара.
         content:
@@ -127,7 +134,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/createOffer"
+              $ref: "#/components/schemas/CreateOffer"
       
       responses:
         "201":
@@ -135,7 +142,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/offer"
+                $ref: "#/components/schemas/Offer"
         "401":
           description: Пользователь не авторизован.
 
@@ -176,7 +183,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/offer"
+                  $ref: "#/components/schemas/Offer"
         "404":
           description: Не можем найти запрошенный ресурс.
 
@@ -199,25 +206,32 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/offer"
+                $ref: "#/components/schemas/Offer"
     patch:
       tags:
         - offers
       summary: Обновить предложение
       description: Обновляет предложение по id. 
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: ID предложения
+          schema:
+            type: string
       requestBody:
         description: Информация для обновления предложения.
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/createOffer"
+              $ref: "#/components/schemas/CreateOffer"
       responses:
         "200":
           description: Предложение обновлено.
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/offer"
+                $ref: "#/components/schemas/Offer"
         "401":
           description: Пользователь не авторизован.
         "404":
@@ -227,6 +241,13 @@ paths:
         - offers
       summary: Удалить предложение
       description: Удаляет предложение по id.
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: ID предложения
+          schema:
+            type: string
       responses:
         "200":
           description: Предложение удалено.
@@ -253,7 +274,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/comment"
+              $ref: "#/components/schemas/Comment"
       responses:
         "201":
           description: Комментарий зарегистрирован. Объект комментария.
@@ -261,7 +282,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/comment"
+                  - $ref: "#/components/schemas/Comment"
                   - type: object
                     properties:
                       id:
@@ -313,7 +334,7 @@ paths:
             application/json:
               schema:
                 allOf:
-                  - $ref: "#/components/schemas/comment"
+                  - $ref: "#/components/schemas/Comment"
                   - type: object
                     properties:
                       id:
@@ -329,7 +350,7 @@ paths:
 
 components:
   schemas:
-    createUser:
+    CreateUser:
       type: object
 
       properties:
@@ -359,7 +380,7 @@ components:
             - regular
             - pro
 
-    user:
+    User:
       type: object
 
       properties:
@@ -386,7 +407,7 @@ components:
         token:
           type: string
 
-    createOffer:
+    CreateOffer:
       type: object
       required:
         - title
@@ -479,7 +500,7 @@ components:
             - latitude
             - longitude
 
-    offer:
+    Offer:
       type: object
       properties:
         id:
@@ -585,7 +606,7 @@ components:
             - latitude
             - longitude
 
-    comment:
+    Comment:
       type: object
       properties:
         text:
