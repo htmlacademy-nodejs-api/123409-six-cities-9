@@ -10,6 +10,7 @@ import { getMongoURI } from '../../shared/helpers/database.js';
 import { inject, injectable } from 'inversify';
 import { Component } from '../../shared/types/component.enum.js';
 
+
 @injectable()
 export class ImportCommand implements Command {
 
@@ -44,7 +45,23 @@ export class ImportCommand implements Command {
 
     await this.offerService.create({
       userId: user.id,
-      ...offerData,
+      title: offerData.title,
+      description: offerData.description,
+      date: offerData.date,
+      city: offerData.city,
+      previewImage: offerData.previewImage,
+      images: offerData.images,
+      isPremium: offerData.isPremium,
+      rating: offerData.rating,
+      type: offerData.type,
+      bedrooms: offerData.bedrooms,
+      maxAdults: offerData.maxAdults,
+      price: offerData.price,
+      comforts: offerData.comforts,
+      coordinates: {
+        latitude: offerData.coordinates[0],
+        longitude: offerData.coordinates[1]
+      }
     });
   }
 
