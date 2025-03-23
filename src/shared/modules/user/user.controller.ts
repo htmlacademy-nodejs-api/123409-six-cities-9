@@ -1,5 +1,5 @@
 import { inject, injectable } from 'inversify';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
 import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';

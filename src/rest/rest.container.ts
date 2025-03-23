@@ -6,6 +6,7 @@ import { Logger, PinoLogger } from '../shared/libs/logger/index.js';
 import { Config, RestConfig, RestSchema } from '../shared/libs/config/index.js';
 import { DatabaseClient, MongoDatabaseClient } from '../shared/libs/database-client/index.js';
 import { ExceptionFilter, AppExceptionFilter } from '../shared/libs/rest/index.js';
+
 export function createRestApplicationContainer() {
   const restApplicationContainer = new Container();
 
