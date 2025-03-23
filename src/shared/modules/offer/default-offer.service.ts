@@ -6,9 +6,10 @@ import { City, Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { OfferEntity } from './offer.entity.js';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
-import { HttpError, HttpCode } from '../../libs/errors/http.error.js';
 import { SortType } from '../../types/sort.enum.js';
 import { DEFAULT_OFFER_COUNT } from './offer.constants.js';
+import { HttpError } from '../../libs/rest/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 @injectable()
 export class DefaultOfferService implements OfferService {
@@ -25,7 +26,7 @@ export class DefaultOfferService implements OfferService {
     } catch (error) {
       this.logger.error('Error creating offer:', error as Error);
       throw new HttpError(
-        HttpCode.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
         'Error creating offer'
       );
     }
@@ -35,7 +36,7 @@ export class DefaultOfferService implements OfferService {
     try {
       const offer = await this.offerModel.findById(offerId).populate(['userId']).exec();
       if (!offer) {
-        throw new HttpError(HttpCode.NOT_FOUND, `Offer with id ${offerId} not found`);
+        throw new HttpError(StatusCodes.NOT_FOUND, `Offer with id ${offerId} not found`);
       }
       return offer;
     } catch (error) {
@@ -44,7 +45,7 @@ export class DefaultOfferService implements OfferService {
       }
       this.logger.error('Error finding offer by id:', error as Error);
       throw new HttpError(
-        HttpCode.INTERNAL_SERVER_ERROR,
+        StatusCodes.INTERNAL_SERVER_ERROR,
         'Error finding offer'
       );
     }

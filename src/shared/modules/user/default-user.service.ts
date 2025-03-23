@@ -6,7 +6,8 @@ import { UserEntity } from './user.entity.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { HttpError } from '../../libs/errors/http.error.js';
+import { HttpError } from '../../libs/rest/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 @injectable()
 export class DefaultUserService implements UserService {
@@ -28,7 +29,7 @@ export class DefaultUserService implements UserService {
   public async findById(userId: string): Promise<DocumentType<UserEntity>> {
     const user = await this.userModel.findById(userId).exec();
     if (!user) {
-      throw new HttpError(404, `User with id ${userId} not found`);
+      throw new HttpError(StatusCodes.NOT_FOUND, `User with id ${userId} not found`);
     }
     return user as DocumentType<UserEntity>;
   }
@@ -36,7 +37,7 @@ export class DefaultUserService implements UserService {
   public async findByEmail(email: string): Promise<DocumentType<UserEntity>> {
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      throw new HttpError(404, `User with email ${email} not found`);
+      throw new HttpError(StatusCodes.NOT_FOUND, `User with email ${email} not found`);
     }
     return user as DocumentType<UserEntity>;
   }
@@ -51,7 +52,7 @@ export class DefaultUserService implements UserService {
 
       return this.create(dto, salt);
     } catch (error) {
-      throw new HttpError(500, 'Internal Server Error');
+      throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error');
     }
   }
 }
