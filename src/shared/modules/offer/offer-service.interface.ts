@@ -12,4 +12,5 @@ export interface OfferService {
   deleteById(offerId: string): Promise<DocumentType<OfferEntity> | null>;
   updateById(offerId: string, dto: CreateOfferDto): Promise<DocumentType<OfferEntity> | null>;
   findPremiumByCity(city: City): Promise<DocumentType<OfferEntity>[]>;
+  exists(documentId: string): Promise<boolean>;
 }

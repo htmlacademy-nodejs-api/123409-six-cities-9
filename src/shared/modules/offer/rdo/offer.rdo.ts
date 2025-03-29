@@ -52,4 +52,7 @@ export class OfferRdo {
     latitude: number;
     longitude: number;
   };
+
+  @Expose()
+  public commentsCount: number;
 }

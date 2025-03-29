@@ -101,4 +101,9 @@ export class DefaultOfferService implements OfferService {
       .limit(DEFAULT_OFFER_COUNT)
       .populate(['userId']);
   }
+
+  public async exists(documentId: string): Promise<boolean> {
+    return (await this.offerModel
+      .exists({_id: documentId})) !== null;
+  }
 }

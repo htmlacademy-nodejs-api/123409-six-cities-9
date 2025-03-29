@@ -2,16 +2,18 @@ import { inject } from 'inversify';
 import { Response, Request } from 'express';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
-import { BaseController, HttpMethod } from '../../libs/rest/index.js';
+import { BaseController, HttpError, HttpMethod } from '../../libs/rest/index.js';
 import { OfferService } from './offer-service.interface.js';
 import { fillDTO } from '../../helpers/common.js';
 import { OfferRdo } from './rdo/offer.rdo.js';
-
+import { CommentRdo, CommentService } from '../comment/index.js';
+import { StatusCodes } from 'http-status-codes';
 
 export class OfferController extends BaseController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
+    @inject(Component.CommentService) private readonly commentService: CommentService,
   ) {
     super(logger);
 
@@ -22,6 +24,7 @@ export class OfferController extends BaseController {
     this.addRoute({ path: '/:id', method: HttpMethod.Get, handler: this.show });
     this.addRoute({ path: '/:id', method: HttpMethod.Patch, handler: this.update });
     this.addRoute({ path: '/:id', method: HttpMethod.Delete, handler: this.delete });
+    this.addRoute({ path: '/:id/comments', method: HttpMethod.Post, handler: this.getComments });
   }
 
   public async create(
@@ -61,6 +64,20 @@ export class OfferController extends BaseController {
     res: Response,
   ): Promise<void> {
     await this.offerService.deleteById(params.id);
+    await this.commentService.deleteByOfferId(params.id);
     this.ok(res, { message: 'Offer deleted successfully' });
+  }
+
+  public async getComments({ params }: Request, res: Response): Promise<void> {
+    if (!await this.offerService.exists(params.id)) {
+      throw new HttpError(
+        StatusCodes.NOT_FOUND,
+        `Offer with id ${params.id} not found.`,
+        'OfferController'
+      );
+    }
+
+    const comments = await this.commentService.findByOfferId(params.id);
+    this.ok(res, fillDTO(CommentRdo, comments));
   }
 }
