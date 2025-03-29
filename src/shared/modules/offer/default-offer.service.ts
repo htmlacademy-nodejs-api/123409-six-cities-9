@@ -1,5 +1,6 @@
 import { inject, injectable } from 'inversify';
 import { DocumentType, types } from '@typegoose/typegoose';
+import { Types } from 'mongoose';
 
 import { OfferService } from './offer-service.interface.js';
 import { City, Component } from '../../types/index.js';
@@ -34,11 +35,35 @@ export class DefaultOfferService implements OfferService {
 
   public async findById(offerId: string): Promise<DocumentType<OfferEntity>> {
     try {
-      const offer = await this.offerModel.findById(offerId).populate(['userId']).exec();
-      if (!offer) {
+      const offers = await this.offerModel.aggregate([
+        { $match: { _id: new Types.ObjectId(offerId) } },
+        {
+          $lookup: {
+            from: 'comments',
+            let: { offerId: '$_id' },
+            pipeline: [
+              { $match: {
+                $expr: { $eq: ['$offerId', '$$offerId'] }
+              } },
+              { $project: { rating: 1 } },
+            ],
+            as: 'comments',
+          },
+        },
+        {
+          $addFields: {
+            id: { $toString: '$_id' },
+            commentsCount: { $size: '$comments' },
+            rating: { $avg: '$comments.rating' },
+          },
+        },
+      ]).exec();
+
+      if (!offers.length) {
         throw new HttpError(StatusCodes.NOT_FOUND, `Offer with id ${offerId} not found`);
       }
-      return offer;
+
+      return offers[0];
     } catch (error) {
       if (error instanceof HttpError) {
         throw error;
@@ -61,7 +86,9 @@ export class DefaultOfferService implements OfferService {
           from: 'comments',
           let: { offerId: '$_id' },
           pipeline: [
-            { $match: { offer: '$$offerId' } },
+            { $match: {
+              $expr: { $eq: ['$offerId', '$$offerId'] }
+            } },
             { $project: { rating: 1 } },
           ],
           as: 'comments',

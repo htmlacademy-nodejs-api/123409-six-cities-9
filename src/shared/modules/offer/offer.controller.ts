@@ -24,7 +24,7 @@ export class OfferController extends BaseController {
     this.addRoute({ path: '/:id', method: HttpMethod.Get, handler: this.show });
     this.addRoute({ path: '/:id', method: HttpMethod.Patch, handler: this.update });
     this.addRoute({ path: '/:id', method: HttpMethod.Delete, handler: this.delete });
-    this.addRoute({ path: '/:id/comments', method: HttpMethod.Post, handler: this.getComments });
+    this.addRoute({ path: '/:id/comments', method: HttpMethod.Get, handler: this.getComments });
   }
 
   public async create(
