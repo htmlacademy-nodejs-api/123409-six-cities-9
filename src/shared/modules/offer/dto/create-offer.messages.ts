@@ -44,6 +44,7 @@ export const CreateOfferValidationMessage = {
     invalidId: 'userId field must be a valid id',
   },
   coordinates: {
-    invalid: 'Coordinates is invalid',
+    invalidLatitude: 'Latitude is invalid',
+    invalidLongitude: 'Longitude is invalid',
   },
 } as const;

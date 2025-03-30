@@ -4,10 +4,10 @@ import { CreateOfferValidationMessage } from './create-offer.messages.js';
 import { Type } from 'class-transformer';
 
 export class CoordinatesDto {
-  @IsLatitude()
+  @IsLatitude({ message: CreateOfferValidationMessage.coordinates.invalidLatitude })
   public latitude!: number;
 
-  @IsLongitude()
+  @IsLongitude({ message: CreateOfferValidationMessage.coordinates.invalidLongitude })
   public longitude!: number;
 }
 

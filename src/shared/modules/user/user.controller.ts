@@ -12,7 +12,9 @@ import { RestSchema } from '../../libs/config/index.js';
 import { Config } from '../../libs/config/index.js';
 import { CreateUserRequest } from './create-user-request.type.js';
 import { LoginUserRequest } from './login-user-request.type.js';
-
+import { CreateUserDto } from './dto/create-user.dto.js';
+import { ValidateDtoMiddleware } from '../../libs/rest/index.js';
+import { LoginUserDto } from './dto/login-user.dto.js';
 
 @injectable()
 export class UserController extends BaseController {
@@ -25,8 +27,8 @@ export class UserController extends BaseController {
 
     this.logger.info('Register routes for UserController…');
 
-    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create });
-    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login });
+    this.addRoute({ path: '/register', method: HttpMethod.Post, handler: this.create, middlewares: [new ValidateDtoMiddleware(CreateUserDto)] });
+    this.addRoute({ path: '/login', method: HttpMethod.Post, handler: this.login, middlewares: [new ValidateDtoMiddleware(LoginUserDto)] });
     this.addRoute({ path: '/login', method: HttpMethod.Get, handler: this.check });
     this.addRoute({ path: '/logout', method: HttpMethod.Post, handler: this.logout });
     this.addRoute({ path: '/:id/avatar', method: HttpMethod.Post, handler: this.uploadAvatar });

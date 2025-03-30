@@ -1,7 +1,7 @@
 import EventEmitter from 'node:events';
 import { createReadStream } from 'node:fs';
 import { FileReader } from './file-reader.interface.js';
-import { City, Comfort, Coordinates, HouseType, Offer, User } from '../../types/index.js';
+import { City, Comfort, Coordinates, HouseType, Offer, User, UserType } from '../../types/index.js';
 
 const CHUNK_SIZE = 16384; // 16KB
 
@@ -68,7 +68,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
 
   private parseUser(user: string): User {
     const [name, email, avatarPath, type] = user.split(';');
-    return { name, email, avatarPath, type: type as 'regular' | 'pro' };
+    return { name, email, avatarPath, type: type as UserType };
   }
 
   public async read(): Promise<void> {
