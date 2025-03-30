@@ -44,7 +44,7 @@ export class OfferController extends BaseController {
       path: '/:id',
       method: HttpMethod.Patch,
       handler: this.update,
-      middlewares: [new ValidateObjectIdMiddleware('id')],
+      middlewares: [new ValidateObjectIdMiddleware('id'), new ValidateDtoMiddleware(CreateOfferDto)],
     });
     this.addRoute({
       path: '/:id',
