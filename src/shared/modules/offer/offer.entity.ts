@@ -13,6 +13,7 @@ import {
   HouseType,
 } from '../../types/index.js';
 import { UserEntity } from '../user/index.js';
+import { CoordinatesDto } from './dto/create-offer.dto.js';
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface OfferEntity extends defaultClasses.Base {}
@@ -57,13 +58,6 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   @prop({ required: true })
   public isFavorite!: boolean;
 
-  @prop({
-    required: true,
-    min: [1, 'Min rating is 1'],
-    max: [5, 'Max rating is 5'],
-  })
-  public rating!: number;
-
   @prop({ required: true, enum: HouseType })
   public type!: HouseType;
 
@@ -97,10 +91,7 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   })
   public userId!: Ref<UserEntity>;
 
-  @prop({ required: true })
-  public commentsCount!: number;
-
-  @prop({ required: true, type: [Number] })
+  @prop({ required: true, type: CoordinatesDto })
   public coordinates!: Coordinates;
 }
 

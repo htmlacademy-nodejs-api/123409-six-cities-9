@@ -15,7 +15,9 @@ export function getRandomItem<T>(items: T[]):T {
 }
 
 export function fillDTO<T, V>(someDto: ClassConstructor<T>, plainObject: V) {
-  return plainToInstance(someDto, plainObject);
+  return plainToInstance(someDto, plainObject, {
+    excludeExtraneousValues: true,
+  });
 }
 
 
