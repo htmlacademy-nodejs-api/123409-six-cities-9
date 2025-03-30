@@ -8,6 +8,7 @@ import {
   HttpMethod,
   ValidateDtoMiddleware,
   ValidateObjectIdMiddleware,
+  DocumentExistsMiddleware,
 } from '../../libs/rest/index.js';
 import { OfferService } from './offer-service.interface.js';
 import { fillDTO } from '../../helpers/common.js';
@@ -38,7 +39,7 @@ export class OfferController extends BaseController {
       path: '/:id',
       method: HttpMethod.Get,
       handler: this.show,
-      middlewares: [new ValidateObjectIdMiddleware('id')],
+      middlewares: [new ValidateObjectIdMiddleware('id'), new DocumentExistsMiddleware(this.offerService, 'Offer', 'id')],
     });
     this.addRoute({
       path: '/:id',
