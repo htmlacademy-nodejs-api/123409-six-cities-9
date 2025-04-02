@@ -20,14 +20,14 @@ export class AppExceptionFilter implements ExceptionFilter {
     this.logger.error(`[${error.detail}]: ${error.httpStatusCode} — ${error.message}`, error);
     res
       .status(error.httpStatusCode)
-      .json(createErrorObject(error.message));
+      .json(createErrorObject(error));
   }
 
   private handleOtherError(error: Error, _req: Request, res: Response, _next: NextFunction): void {
     this.logger.error(error.message, error);
     res
       .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json(createErrorObject(error.message));
+      .json(createErrorObject({message: error.message}));
   }
 
   public catch(error: Error, _req: Request, res: Response, _next: NextFunction): void {
