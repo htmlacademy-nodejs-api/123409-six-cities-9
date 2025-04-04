@@ -9,6 +9,7 @@ import {
   ValidateDtoMiddleware,
   ValidateObjectIdMiddleware,
   DocumentExistsMiddleware,
+  PrivateRouteMiddleware,
 } from '../../libs/rest/index.js';
 import { OfferService } from './offer-service.interface.js';
 import { fillDTO } from '../../helpers/common.js';
@@ -33,7 +34,7 @@ export class OfferController extends BaseController {
       path: '/',
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateOfferDto)],
+      middlewares: [new ValidateDtoMiddleware(CreateOfferDto), new PrivateRouteMiddleware()],
     });
     this.addRoute({
       path: '/:id',
@@ -45,13 +46,13 @@ export class OfferController extends BaseController {
       path: '/:id',
       method: HttpMethod.Patch,
       handler: this.update,
-      middlewares: [new ValidateObjectIdMiddleware('id'), new ValidateDtoMiddleware(CreateOfferDto)],
+      middlewares: [new ValidateObjectIdMiddleware('id'), new ValidateDtoMiddleware(CreateOfferDto), new PrivateRouteMiddleware()],
     });
     this.addRoute({
       path: '/:id',
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: [new ValidateObjectIdMiddleware('id')],
+      middlewares: [new ValidateObjectIdMiddleware('id'), new PrivateRouteMiddleware()],
     });
     this.addRoute({
       path: '/:id/comments',
