@@ -53,7 +53,6 @@ export class CreateOfferDto {
   @IsEnum(Comfort, { each: true, message: CreateOfferValidationMessage.comforts.invalidId })
   public comforts!: Comfort[];
 
-  @IsMongoId({ message: CreateOfferValidationMessage.userId.invalidId })
   public userId: string;
 
   @IsObject()

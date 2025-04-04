@@ -49,14 +49,9 @@ export class UserController extends BaseController {
       middlewares: [new ValidateDtoMiddleware(LoginUserDto)],
     });
     this.addRoute({
-      path: '/login',
+      path: '/check',
       method: HttpMethod.Get,
-      handler: this.check,
-    });
-    this.addRoute({
-      path: '/logout',
-      method: HttpMethod.Post,
-      handler: this.logout,
+      handler: this.checkAuth,
     });
     this.addRoute({
       path: '/:id/avatar',
@@ -100,20 +95,18 @@ export class UserController extends BaseController {
     this.created(res, fillDTO(UserRdo, result));
   }
 
-  public async check(): Promise<void> {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
-  }
+  public async checkAuth({ tokenPayload: { email }}: Request, res: Response) {
+    const foundedUser = await this.userService.findByEmail(email);
 
-  public async logout(): Promise<void> {
-    throw new HttpError(
-      StatusCodes.NOT_IMPLEMENTED,
-      'Not implemented',
-      'UserController'
-    );
+    if (!foundedUser) {
+      throw new HttpError(
+        StatusCodes.UNAUTHORIZED,
+        'Unauthorized',
+        'UserController'
+      );
+    }
+
+    this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
   public async uploadAvatar(req: Request, res: Response): Promise<void> {
