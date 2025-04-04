@@ -37,6 +37,12 @@ export class OfferController extends BaseController {
       middlewares: [new ValidateDtoMiddleware(CreateOfferDto), new PrivateRouteMiddleware()],
     });
     this.addRoute({
+      path: '/favorites',
+      method: HttpMethod.Get,
+      handler: this.getFavorites,
+      middlewares: [new PrivateRouteMiddleware()],
+    });
+    this.addRoute({
       path: '/:id',
       method: HttpMethod.Get,
       handler: this.show,
@@ -65,12 +71,6 @@ export class OfferController extends BaseController {
       method: HttpMethod.Post,
       handler: this.toggleFavorite,
       middlewares: [new ValidateObjectIdMiddleware('id'), new PrivateRouteMiddleware()],
-    });
-    this.addRoute({
-      path: '/favorites',
-      method: HttpMethod.Get,
-      handler: this.getFavorites,
-      middlewares: [new PrivateRouteMiddleware()],
     });
   }
 
