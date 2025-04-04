@@ -60,6 +60,18 @@ export class OfferController extends BaseController {
       handler: this.getComments,
       middlewares: [new ValidateObjectIdMiddleware('id')],
     });
+    this.addRoute({
+      path: '/:id/favorite',
+      method: HttpMethod.Post,
+      handler: this.toggleFavorite,
+      middlewares: [new ValidateObjectIdMiddleware('id'), new PrivateRouteMiddleware()],
+    });
+    this.addRoute({
+      path: '/favorites',
+      method: HttpMethod.Get,
+      handler: this.getFavorites,
+      middlewares: [new PrivateRouteMiddleware()],
+    });
   }
 
   public async create({ body, tokenPayload }: Request, res: Response): Promise<void> {
@@ -67,13 +79,13 @@ export class OfferController extends BaseController {
     this.created(res, fillDTO(OfferRdo, newOffer));
   }
 
-  public async index(_req: Request, res: Response): Promise<void> {
-    const offers = await this.offerService.find();
+  public async index(req: Request, res: Response): Promise<void> {
+    const offers = await this.offerService.find(undefined, undefined, req.tokenPayload?.id);
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 
-  public async show({ params }: Request, res: Response): Promise<void> {
-    const offer = await this.offerService.findById(params.id);
+  public async show(req: Request, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(req.params.id, req.tokenPayload?.id);
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
@@ -99,5 +111,15 @@ export class OfferController extends BaseController {
 
     const comments = await this.commentService.findByOfferId(params.id);
     this.ok(res, fillDTO(CommentRdo, comments));
+  }
+
+  public async toggleFavorite({ params, tokenPayload }: Request, res: Response): Promise<void> {
+    const isFavorite = await this.offerService.toggleFavorite(params.id, tokenPayload.id);
+    this.ok(res, { isFavorite });
+  }
+
+  public async getFavorites({ tokenPayload }: Request, res: Response): Promise<void> {
+    const offers = await this.offerService.findFavorites(tokenPayload.id);
+    this.ok(res, fillDTO(OfferRdo, offers));
   }
 }
