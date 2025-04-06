@@ -5,7 +5,7 @@ import { Logger } from '../shared/libs/logger/index.js';
 import { Config, RestSchema } from '../shared/libs/config/index.js';
 import { Component } from '../shared/types/index.js';
 import { DatabaseClient } from '../shared/libs/database-client/database-client.interface.js';
-import { getMongoURI } from '../shared/helpers/index.js';
+import { getFullServerPath, getMongoURI } from '../shared/helpers/index.js';
 import { Controller, ExceptionFilter, ParseTokenMiddleware } from '../shared/libs/rest/index.js';
 
 @injectable()
@@ -83,6 +83,6 @@ export class Application {
 
     this.logger.info('Init server...');
     await this._initServer();
-    this.logger.info(`Server is running on port ${this.config.get('PORT')}`);
+    this.logger.info(`🚀 Server started on ${getFullServerPath(this.config.get('HOST'), this.config.get('PORT'))}`);
   }
 }

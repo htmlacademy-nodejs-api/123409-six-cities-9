@@ -10,9 +10,6 @@ export class CreateUserDto {
   @IsEmail({}, { message: CreateUserValidationMessage.email.invalid })
   public email: string;
 
-  @IsUrl({}, { message: CreateUserValidationMessage.avatarPath.invalid })
-  public avatarPath: string;
-
   @MinLength(6, { message: CreateUserValidationMessage.password.minLength })
   @MaxLength(12, { message: CreateUserValidationMessage.password.maxLength })
   public password: string;

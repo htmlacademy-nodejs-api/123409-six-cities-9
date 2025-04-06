@@ -13,6 +13,7 @@ export type RestSchema = {
     DB_NAME: string;
     UPLOAD_DIRECTORY: string;
     JWT_SECRET: string;
+    HOST: string;
 }
 
 
@@ -70,5 +71,11 @@ export const restSchema = convict({
     format: String,
     env: 'JWT_SECRET',
     default: 'secret'
+  },
+  HOST: {
+    doc: 'Host',
+    format: String,
+    env: 'HOST',
+    default: 'localhost'
   },
 });
