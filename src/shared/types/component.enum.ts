@@ -16,4 +16,5 @@ export const Component = {
   OfferController: Symbol.for('OfferController'),
   CommentController: Symbol.for('CommentController'),
   AuthService: Symbol.for('AuthService'),
+  PathTransformer: Symbol.for('PathTransformer'),
 } as const;
