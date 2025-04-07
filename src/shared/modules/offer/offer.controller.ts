@@ -17,17 +17,12 @@ import { OfferRdo } from './rdo/offer.rdo.js';
 import { CommentRdo, CommentService } from '../comment/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { CreateOfferDto } from './dto/create-offer.dto.js';
-import { Config, RestSchema } from '../../libs/config/index.js';
-import { UploadFileMiddleware } from '../../libs/rest/index.js';
-import { UploadImageRdo } from './rdo/upload-image.rdo.js';
-import { ParamOfferId } from './types/param-offerid.type.js';
 
 export class OfferController extends BaseController {
   constructor(
     @inject(Component.Logger) protected readonly logger: Logger,
     @inject(Component.OfferService) private readonly offerService: OfferService,
     @inject(Component.CommentService)
-    @inject(Component.Config) private readonly configService: Config<RestSchema>,
     private readonly commentService: CommentService
   ) {
     super(logger);
@@ -83,16 +78,6 @@ export class OfferController extends BaseController {
       handler: this.toggleFavorite,
       middlewares: [new ValidateObjectIdMiddleware('id'), new PrivateRouteMiddleware()],
     });
-    this.addRoute({
-      path: '/:id/image',
-      method: HttpMethod.Post,
-      handler: this.uploadImage,
-      middlewares: [
-        new PrivateRouteMiddleware(),
-        new ValidateObjectIdMiddleware('offerId'),
-        new UploadFileMiddleware(this.configService.get('UPLOAD_DIRECTORY'), 'image'),
-      ]
-    });
   }
 
   public async create({ body, tokenPayload }: Request, res: Response): Promise<void> {
@@ -147,11 +132,5 @@ export class OfferController extends BaseController {
   public async getPremium({ params, tokenPayload }: Request, res: Response): Promise<void> {
     const offers = await this.offerService.findPremiumByCity(params.city as City, tokenPayload.id);
     this.ok(res, fillDTO(OfferRdo, offers));
-  }
-
-  public async uploadImage(req: Request, res: Response): Promise<void> {
-    this.created(res, {
-      filepath: req.file?.path
-    });
   }
 }

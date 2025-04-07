@@ -1,5 +1,5 @@
 import { City, Comfort, HouseType} from '../../../types/index.js';
-import { IsArray, IsDateString, IsEnum, IsInt, IsString, MaxLength, MinLength, IsBoolean, ArrayUnique, IsObject, ValidateNested, IsLongitude, IsLatitude, IsUrl } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsInt, IsString, MaxLength, MinLength, IsBoolean, ArrayUnique, IsObject, ValidateNested, IsLongitude, IsLatitude } from 'class-validator';
 import { CreateOfferValidationMessage } from './create-offer.messages.js';
 import { Type } from 'class-transformer';
 
@@ -27,15 +27,14 @@ export class CreateOfferDto {
   public city!: City;
 
   @MaxLength(256, { message: CreateOfferValidationMessage.previewImage.maxLength })
-  @IsUrl({}, { message: CreateOfferValidationMessage.previewImage.invalidUrl })
+  @IsString({ message: CreateOfferValidationMessage.previewImage.invalidUrl })
   public previewImage: string;
 
   @IsArray()
   @IsString({ each: true })
   @ArrayUnique()
-  @MinLength(6, { message: CreateOfferValidationMessage.images.minLength })
-  @MaxLength(6, { message: CreateOfferValidationMessage.images.maxLength })
-  @IsUrl({}, { each: true, message: CreateOfferValidationMessage.images.invalidUrl })
+  @MinLength(6)
+  @MaxLength(6)
   public images: string[];
 
   @IsBoolean()

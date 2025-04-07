@@ -9,7 +9,7 @@ import { Logger } from '../../libs/logger/index.js';
 import { HttpError } from '../../libs/rest/index.js';
 import { StatusCodes } from 'http-status-codes';
 import { DEFAULT_AVATAR_FILE_NAME } from './user.constant.js';
-
+import { UpdateUserDto } from './dto/update-user.dto.js';
 @injectable()
 export class DefaultUserService implements UserService {
   constructor(
@@ -49,5 +49,25 @@ export class DefaultUserService implements UserService {
     } catch (error) {
       throw new HttpError(StatusCodes.INTERNAL_SERVER_ERROR, 'Internal Server Error');
     }
+  }
+
+  public async updateByEmail(email: string, dto: UpdateUserDto): Promise<DocumentType<UserEntity> | null> {
+    const updateData: Partial<UpdateUserDto> = {};
+
+    if (dto.name) {
+      updateData.name = dto.name;
+    }
+
+    if (dto.avatarPath) {
+      updateData.avatarPath = dto.avatarPath;
+    }
+
+    const updatedUser = await this.userModel.findOneAndUpdate(
+      { email },
+      { $set: updateData },
+      { new: true }
+    );
+
+    return updatedUser as DocumentType<UserEntity>;
   }
 }

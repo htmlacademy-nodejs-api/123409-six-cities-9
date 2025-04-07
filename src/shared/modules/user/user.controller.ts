@@ -6,9 +6,8 @@ import {
   BaseController,
   HttpError,
   HttpMethod,
-  ValidateDtoMiddleware,
-  ValidateObjectIdMiddleware,
-  UploadFileMiddleware,
+  PrivateRouteMiddleware,
+  ValidateDtoMiddleware
 } from '../../libs/rest/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { Component } from '../../types/index.js';
@@ -23,7 +22,8 @@ import { CreateUserDto } from './dto/create-user.dto.js';
 import { LoginUserDto } from './dto/login-user.dto.js';
 import { LoggedUserRdo } from './rdo/logged-user.rdo.js';
 import { AuthService } from '../auth/index.js';
-
+import { UpdateUserDto } from './dto/update-user.dto.js';
+import { UpdateUserRequest } from './update-user-request.type.js';
 @injectable()
 export class UserController extends BaseController {
   constructor(
@@ -54,13 +54,10 @@ export class UserController extends BaseController {
       handler: this.checkAuth,
     });
     this.addRoute({
-      path: '/:id/avatar',
-      method: HttpMethod.Post,
-      handler: this.uploadAvatar,
-      middlewares: [
-        new ValidateObjectIdMiddleware('id'),
-        new UploadFileMiddleware(this.config.get('UPLOAD_DIRECTORY'), 'avatar'),
-      ],
+      path: '/update',
+      method: HttpMethod.Put,
+      handler: this.update,
+      middlewares: [new ValidateDtoMiddleware(UpdateUserDto), new PrivateRouteMiddleware()],
     });
   }
 
@@ -106,9 +103,8 @@ export class UserController extends BaseController {
     this.ok(res, fillDTO(LoggedUserRdo, foundedUser));
   }
 
-  public async uploadAvatar(req: Request, res: Response): Promise<void> {
-    this.created(res, {
-      filepath: req.file?.path
-    });
+  public async update({ tokenPayload: { email }, body }: UpdateUserRequest, res: Response) {
+    const updatedUser = await this.userService.updateByEmail(email, body);
+    this.ok(res, fillDTO(LoggedUserRdo, updatedUser));
   }
 }
