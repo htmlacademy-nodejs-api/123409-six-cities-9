@@ -14,6 +14,8 @@ tags:
     description: Действия с комментариями.
   - name: users
     description: Действия с пользователем.
+  - name: upload
+    description: Загрузка файлов.
 paths:
   /users/register:
     post:
@@ -21,7 +23,6 @@ paths:
         - users
       summary: Регистрация пользователя
       description: Регистрирует нового пользователя.
-
       requestBody:
         description: Информация для создания нового пользователя.
         content:
@@ -29,7 +30,6 @@ paths:
             schema:
               $ref: "#/components/schemas/CreateUser"
         required: true
-
       responses:
         "201":
           description: Пользователь зарегистрирован. Объект пользователя.
@@ -37,7 +37,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
-
         "409":
           description: Пользователь с таким email уже существует.
 
@@ -47,7 +46,6 @@ paths:
         - users
       summary: Авторизация пользователя
       description: Авторизует пользователя на основе логина и пароля
-
       requestBody:
         description: Информация для авторизации пользователя.
         content:
@@ -69,73 +67,58 @@ paths:
                 $ref: "#/components/schemas/User"
         "401":
           description: Неверный логин или пароль.
+
+  /users/check:
     get:
       tags:
         - users
       summary: Проверка состояния пользователя
       description: Возвращает информацию по авторизованному пользователю
       responses:
-        "201":
+        "200":
           description: Пользователь авторизован. Объект пользователя.
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/User"
+        "401":
+          description: Пользователь не авторизован.
 
-  /users/logout:
-    post:
+  /users/update:
+    put:
       tags:
         - users
-      summary: Выход из системы
-      description: Выходит из системы текущего пользователя
-      responses:
-        "200":
-          description: Пользователь вышел из системы.
-
-  /users/{userId}/avatar:
-    post:
-      tags:
-        - users
-      summary: Загрузить изображение аватара
-      description: Загружает изображение аватара пользователя. Изображение
-        аватара должно быть в формате `png` или `jpg`.
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          description: ID пользователя
-          schema:
-            type: string  
+      summary: Обновление данных пользователя
+      description: Обновляет данные авторизованного пользователя
       requestBody:
-        description: Изображение аватара.
+        description: Информация для обновления пользователя.
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                avatar:
-                  type: string
-
+              $ref: "#/components/schemas/UpdateUser"
+        required: true
       responses:
         "200":
-          description: Изображение аватара загружено.
-        "404":
-          description: Пользователь с указанным userId не найден.
-    
+          description: Данные пользователя обновлены.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Пользователь не авторизован.
+
   /offers:
     post:
       tags:
         - offers
       summary: Создать предложение
       description: Создает новое предложение по аренде.
-
       requestBody:
         description: Информация для создания нового предложения.
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/CreateOffer"
-      
       responses:
         "201":
           description: Предложение зарегистрировано. Объект предложения.
@@ -184,8 +167,49 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Offer"
-        "404":
-          description: Не можем найти запрошенный ресурс.
+
+  /offers/favorites:
+    get:
+      tags:
+        - offers
+      summary: Получить избранные предложения
+      description: Возвращает список избранных предложений пользователя
+      responses:
+        "200":
+          description: Список избранных предложений.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Offer"
+        "401":
+          description: Пользователь не авторизован.
+
+  /offers/premium/{city}:
+    get:
+      tags:
+        - offers
+      summary: Получить премиальные предложения по городу
+      description: Возвращает премиальные предложения для указанного города
+      parameters:
+        - name: city
+          in: path
+          required: true
+          description: Название города
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Список премиальных предложений.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Offer"
+        "401":
+          description: Пользователь не авторизован.
 
   /offers/{offerId}:
     get:
@@ -207,6 +231,9 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Offer"
+        "404":
+          description: Предложение не найдено.
+
     patch:
       tags:
         - offers
@@ -236,6 +263,7 @@ paths:
           description: Пользователь не авторизован.
         "404":
           description: Предложение не найдено.
+
     delete:
       tags:
         - offers
@@ -257,46 +285,11 @@ paths:
           description: Предложение не найдено.
 
   /offers/{offerId}/comments:
-    post:
-      tags:
-        - comments
-      summary: Создать комментарий
-      description: Создает новый комментарий.
-      parameters:
-        - name: offerId
-          in: path
-          required: true
-          description: ID предложения
-          schema:
-            type: string
-      requestBody:
-        description: Информация для создания нового комментария.
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/Comment"
-      responses:
-        "201":
-          description: Комментарий зарегистрирован. Объект комментария.
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: "#/components/schemas/Comment"
-                  - type: object
-                    properties:
-                      id:
-                        type: string
-                        example: "6329c3d6a04ab1061c6425ea"
-                      date:
-                        type: string
-                        format: date-time
-                        example: "2024-01-01T12:00:00.000Z"
     get:
       tags:
         - comments
-      summary: Получить комментарии
-      description: Возвращает все комментарии.
+      summary: Получить комментарии предложения
+      description: Возвращает комментарии для указанного предложения
       parameters:
         - name: offerId
           in: path
@@ -304,76 +297,134 @@ paths:
           description: ID предложения
           schema:
             type: string
-        - name: sortDate
-          in: query
-          required: false
-          description: Сортировка по дате (asc или desc)
-          schema:
-            type: string
-            enum: [asc, desc]
-        - name: perPage
-          in: query
-          required: false
-          description: Количество элементов на странице
-          schema:
-            type: integer
-            minimum: 1
-            default: 10
-        - name: page
-          in: query
-          required: false
-          description: Номер страницы
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
       responses:
         "200":
           description: Комментарии найдены.
           content:
             application/json:
               schema:
-                allOf:
-                  - $ref: "#/components/schemas/Comment"
-                  - type: object
-                    properties:
-                      id:
-                        type: string
-                        example: "6329c3d6a04ab1061c6425ea"
-                      date:
-                        type: string
-                        format: date-time
-                        example: "2024-01-01T12:00:00.000Z"
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
+        "404":
+          description: Предложение не найдено.
 
+  /offers/{offerId}/favorite:
+    post:
+      tags:
+        - offers
+      summary: Изменить статус избранного
+      description: Добавляет или удаляет предложение из избранного
+      parameters:
+        - name: offerId
+          in: path
+          required: true
+          description: ID предложения
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Статус избранного изменен.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+        "401":
+          description: Пользователь не авторизован.
+        "404":
+          description: Предложение не найдено.
 
+  /comments:
+    post:
+      tags:
+        - comments
+      summary: Создать комментарий
+      description: Создает новый комментарий.
+      requestBody:
+        description: Информация для создания нового комментария.
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateComment"
+      responses:
+        "201":
+          description: Комментарий зарегистрирован. Объект комментария.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Comment"
+        "401":
+          description: Пользователь не авторизован.
 
+  /upload:
+    post:
+      tags:
+        - upload
+      summary: Загрузить файл
+      description: Загружает файл на сервер
+      requestBody:
+        description: Файл для загрузки
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+      responses:
+        "201":
+          description: Файл загружен.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  path:
+                    type: string
+                    description: Путь к загруженному файлу
 
 components:
   schemas:
     CreateUser:
       type: object
-
+      required:
+        - email
+        - name
+        - password
       properties:
         email:
           type: string
           format: email
           example: test@test.ru
-
         name:
           type: string
           minLength: 1
           maxLength: 15
           example: Firstname Lastname
-
         password:
           type: string
           minLength: 6
           maxLength: 12
           example: 123456
-
         avatar:
           type: string
+        type:
+          type: string
+          enum:
+            - regular
+            - pro
 
+    UpdateUser:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 15
+          example: Firstname Lastname
+        avatar:
+          type: string
         type:
           type: string
           enum:
@@ -382,28 +433,23 @@ components:
 
     User:
       type: object
-
       properties:
         email:
           type: string
           format: email
           example: test@test.ru
-
         name:
           type: string
           minLength: 1
           maxLength: 15
           example: Firstname Lastname
-
         avatar:
           type: string
-
         type:
           type: string
           enum:
             - regular
             - pro
-
         token:
           type: string
 
@@ -422,29 +468,24 @@ components:
         - price
         - comforts
         - coordinates
-
       properties:
         title:
           type: string  
           minLength: 10
           maxLength: 100
           example: "Квартира в центре города"
-
         description:
           type: string
           minLength: 10
           maxLength: 1024
           example: "Описание квартиры"
-
         city:
           type: string
           example: "Paris"
-
         previewImage:
           type: string
           format: uri
           example: "https://example.com/image.jpg"
-
         images:
           type: array
           items:
@@ -453,40 +494,33 @@ components:
           minItems: 1
           maxItems: 6
           example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-
         isPremium:
           type: boolean
           example: false
-
         type:
           type: string
           enum: ["apartment", "house", "room", "hotel"]
           example: "apartment"
-
         bedrooms:
           type: integer
           minimum: 1
           maximum: 8
           example: 2
-
         maxAdults:
           type: integer
           minimum: 1
           maximum: 10
           example: 2
-
         price:
           type: number
           minimum: 100
           maximum: 100000
           example: 1000
-
         comforts:
           type: array
           items:
             type: string
           example: ["Breakfast", "Air conditioning", "Laptop friendly workspace"]
-
         coordinates:
           type: object
           properties:
@@ -506,33 +540,27 @@ components:
         id:
           type: string
           example: "6329c3d6a04ab1061c6425ea"
-
         title:
           type: string  
           minLength: 10
           maxLength: 100
           example: "Квартира в центре города"
-
         description:
           type: string
           minLength: 10
           maxLength: 1024
           example: "Описание квартиры"
-
         date:
           type: string
           format: date-time
           example: "2024-01-01T12:00:00.000Z"
-
         city:
           type: string
           example: "Paris"
-
         previewImage:
           type: string
           format: uri
           example: "https://example.com/image.jpg"
-
         images:
           type: array
           items:
@@ -541,58 +569,47 @@ components:
           minItems: 1
           maxItems: 6
           example: ["https://example.com/image1.jpg", "https://example.com/image2.jpg"]
-
         isPremium:
           type: boolean
           example: false
-
         isFavorite:
           type: boolean
           example: false
-
         rating:
           type: number
           minimum: 1
           maximum: 5
           example: 4.5
-
         type:
           type: string
           enum: ["apartment", "house", "room", "hotel"]
           example: "apartment"
-
         bedrooms:
           type: integer
           minimum: 1
           maximum: 8
           example: 2
-
         maxAdults:
           type: integer
           minimum: 1
           maximum: 10
           example: 2
-
         price:
           type: number
           minimum: 100
           maximum: 100000
           example: 1000
-
         comforts:
           type: array
           items:
             type: string
           example: ["Breakfast", "Air conditioning", "Laptop friendly workspace"]
-
         user:
           type: string
-
         commentsCount:
           type: integer
           minimum: 0
           example: 5
-
         coordinates:
           type: object
           properties:
@@ -606,12 +623,41 @@ components:
             - latitude
             - longitude
 
-    Comment:
+    CreateComment:
       type: object
+      required:
+        - text
+        - rating
+        - offerId
       properties:
         text:
           type: string
+          minLength: 5
+          maxLength: 1024
         rating:
           type: number
+          minimum: 1
+          maximum: 5
+        offerId:
+          type: string
+
+    Comment:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "6329c3d6a04ab1061c6425ea"
+        text:
+          type: string
+          minLength: 5
+          maxLength: 1024
+        rating:
+          type: number
+          minimum: 1
+          maximum: 5
         user:
           type: string
+        date:
+          type: string
+          format: date-time
+          example: "2024-01-01T12:00:00.000Z"
