@@ -15,9 +15,12 @@ export const CreateOfferValidationMessage = {
   },
   previewImage: {
     maxLength: 'Too short for field «previewImage»',
+    invalidUrl: 'Invalid URL',
   },
   images: {
     maxLength: 'Too short for field «images»',
+    minLength: 'Too short for field «images»',
+    invalidUrl: 'Invalid URL',
   },
   isPremium: {
     invalid: 'isPremium must be a boolean',

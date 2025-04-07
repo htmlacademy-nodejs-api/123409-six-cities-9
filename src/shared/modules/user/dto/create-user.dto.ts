@@ -1,4 +1,4 @@
-import { IsEnum, IsUrl, IsEmail, MaxLength, MinLength } from 'class-validator';
+import { IsEnum, IsEmail, MaxLength, MinLength, IsOptional, IsString } from 'class-validator';
 import { CreateUserValidationMessage } from './create-user.messages.js';
 import { UserType } from '../../../types/index.js';
 
@@ -10,8 +10,9 @@ export class CreateUserDto {
   @IsEmail({}, { message: CreateUserValidationMessage.email.invalid })
   public email: string;
 
-  @IsUrl({}, { message: CreateUserValidationMessage.avatarPath.invalid })
-  public avatarPath: string;
+  @IsOptional()
+  @IsString({ message: CreateUserValidationMessage.avatarPath.invalid })
+  public avatarPath?: string;
 
   @MinLength(6, { message: CreateUserValidationMessage.password.minLength })
   @MaxLength(12, { message: CreateUserValidationMessage.password.maxLength })

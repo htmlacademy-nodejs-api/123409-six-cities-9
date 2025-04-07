@@ -27,14 +27,21 @@ export class CreateOfferDto {
   public city!: City;
 
   @MaxLength(256, { message: CreateOfferValidationMessage.previewImage.maxLength })
+  @IsString({ message: CreateOfferValidationMessage.previewImage.invalidUrl })
   public previewImage: string;
 
   @IsArray()
   @IsString({ each: true })
+  @ArrayUnique()
+  @MinLength(6)
+  @MaxLength(6)
   public images: string[];
 
   @IsBoolean()
   public isPremium: boolean;
+
+  @IsBoolean()
+  public isFavorite: boolean;
 
   @IsEnum(HouseType, { message: CreateOfferValidationMessage.type.invalid })
   public type: HouseType;

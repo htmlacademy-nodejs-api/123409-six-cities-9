@@ -1,6 +1,6 @@
 import { inject } from 'inversify';
 import { Response, Request } from 'express';
-import { Component } from '../../types/index.js';
+import { City, Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import {
   BaseController,
@@ -40,6 +40,12 @@ export class OfferController extends BaseController {
       path: '/favorites',
       method: HttpMethod.Get,
       handler: this.getFavorites,
+      middlewares: [new PrivateRouteMiddleware()],
+    });
+    this.addRoute({
+      path: '/premium/:city',
+      method: HttpMethod.Get,
+      handler: this.getPremium,
       middlewares: [new PrivateRouteMiddleware()],
     });
     this.addRoute({
@@ -120,6 +126,11 @@ export class OfferController extends BaseController {
 
   public async getFavorites({ tokenPayload }: Request, res: Response): Promise<void> {
     const offers = await this.offerService.findFavorites(tokenPayload.id);
+    this.ok(res, fillDTO(OfferRdo, offers));
+  }
+
+  public async getPremium({ params, tokenPayload }: Request, res: Response): Promise<void> {
+    const offers = await this.offerService.findPremiumByCity(params.city as City, tokenPayload.id);
     this.ok(res, fillDTO(OfferRdo, offers));
   }
 }
