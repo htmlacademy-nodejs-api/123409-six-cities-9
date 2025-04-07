@@ -28,17 +28,11 @@ export class DefaultUserService implements UserService {
 
   public async findById(userId: string): Promise<DocumentType<UserEntity>> {
     const user = await this.userModel.findById(userId).exec();
-    if (!user) {
-      throw new HttpError(StatusCodes.NOT_FOUND, `User with id ${userId} not found`);
-    }
     return user as DocumentType<UserEntity>;
   }
 
   public async findByEmail(email: string): Promise<DocumentType<UserEntity>> {
     const user = await this.userModel.findOne({ email });
-    if (!user) {
-      throw new HttpError(StatusCodes.NOT_FOUND, `User with email ${email} not found`);
-    }
     return user as DocumentType<UserEntity>;
   }
 

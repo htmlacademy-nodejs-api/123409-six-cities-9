@@ -1,5 +1,5 @@
 import { City, Comfort, HouseType} from '../../../types/index.js';
-import { IsArray, IsDateString, IsEnum, IsInt, IsMongoId, IsString, MaxLength, MinLength, IsBoolean, ArrayUnique, IsObject, ValidateNested, IsLongitude, IsLatitude } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsInt, IsString, MaxLength, MinLength, IsBoolean, ArrayUnique, IsObject, ValidateNested, IsLongitude, IsLatitude } from 'class-validator';
 import { CreateOfferValidationMessage } from './create-offer.messages.js';
 import { Type } from 'class-transformer';
 
@@ -53,7 +53,6 @@ export class CreateOfferDto {
   @IsEnum(Comfort, { each: true, message: CreateOfferValidationMessage.comforts.invalidId })
   public comforts!: Comfort[];
 
-  @IsMongoId({ message: CreateOfferValidationMessage.userId.invalidId })
   public userId: string;
 
   @IsObject()
