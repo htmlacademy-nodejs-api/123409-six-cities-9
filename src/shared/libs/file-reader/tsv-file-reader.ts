@@ -47,7 +47,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       bedrooms: this.parseToNumber(bedrooms),
       maxAdults: this.parseToNumber(maxAdults),
       price: this.parsePrice(price),
-      comforts: comforts.split(';').map((comfort) => comfort as Comfort),
+      comforts: comforts.split(';') as Comfort[],
       user: this.parseUser(user),
       commentsCount: this.parseToNumber(commentsCount),
       coordinates: coordinates.split(';').map((coordinate) => Number.parseFloat(coordinate)) as Coordinates
