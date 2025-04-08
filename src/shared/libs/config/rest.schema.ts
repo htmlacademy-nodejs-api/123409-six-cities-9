@@ -29,7 +29,7 @@ export const restSchema = convict({
     doc: 'Salt for password hash',
     format: String,
     env: 'SALT',
-    default: '12345',
+    default: '123456',
   },
   DB_HOST: {
     doc: 'Database host',

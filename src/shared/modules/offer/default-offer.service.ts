@@ -55,6 +55,11 @@ export class DefaultOfferService implements OfferService {
         {
           $addFields: {
             id: { $toString: '$_id' },
+            userId: { $toString: '$userId' },
+            coordinates: {
+              latitude: { $toDouble: '$coordinates.latitude' },
+              longitude: { $toDouble: '$coordinates.longitude' }
+            },
             commentsCount: { $size: '$comments' },
             rating: { $avg: '$comments.rating' },
             isFavorite: userId ? {
@@ -104,6 +109,11 @@ export class DefaultOfferService implements OfferService {
         {
           $addFields: {
             id: { $toString: '$_id' },
+            userId: { $toString: '$userId' },
+            coordinates: {
+              latitude: { $toDouble: '$coordinates.latitude' },
+              longitude: { $toDouble: '$coordinates.longitude' }
+            },
             commentsCount: { $size: '$comments' },
             rating: { $avg: '$comments.rating' },
             isFavorite: userId ? {
