@@ -95,12 +95,32 @@ export class OfferController extends BaseController {
     this.ok(res, fillDTO(OfferRdo, offer));
   }
 
-  public async update({ params, body }: Request, res: Response): Promise<void> {
-    const offer = await this.offerService.updateById(params.id, body);
-    this.ok(res, fillDTO(OfferRdo, offer));
+  public async update({ params, body, tokenPayload }: Request, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(params.id);
+
+    if (offer!.userId.toString() !== tokenPayload.id) {
+      throw new HttpError(
+        StatusCodes.FORBIDDEN,
+        'You can only update your own offers.',
+        'OfferController'
+      );
+    }
+
+    const updatedOffer = await this.offerService.updateById(params.id, body);
+    this.ok(res, fillDTO(OfferRdo, updatedOffer));
   }
 
-  public async delete({ params }: Request, res: Response): Promise<void> {
+  public async delete({ params, tokenPayload }: Request, res: Response): Promise<void> {
+    const offer = await this.offerService.findById(params.id);
+
+    if (offer!.userId.toString() !== tokenPayload.id) {
+      throw new HttpError(
+        StatusCodes.FORBIDDEN,
+        'You can only delete your own offers.',
+        'OfferController'
+      );
+    }
+
     await this.offerService.deleteById(params.id);
     await this.commentService.deleteByOfferId(params.id);
     this.ok(res, { message: 'Offer deleted successfully' });
