@@ -57,6 +57,7 @@ export class ImportCommand implements Command {
       maxAdults: offerData.maxAdults,
       price: offerData.price,
       comforts: offerData.comforts,
+      isFavorite: false,
       coordinates: {
         latitude: offerData.coordinates[0],
         longitude: offerData.coordinates[1]
