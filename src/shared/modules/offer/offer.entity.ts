@@ -9,11 +9,17 @@ import {
 import {
   City,
   Comfort,
-  Coordinates,
   HouseType,
 } from '../../types/index.js';
 import { UserEntity } from '../user/index.js';
-import { CoordinatesDto } from './dto/create-offer.dto.js';
+
+class EntityCoordinates {
+  @prop({ required: true })
+  public latitude!: number;
+
+  @prop({ required: true })
+  public longitude!: number;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-unsafe-declaration-merging
 export interface OfferEntity extends defaultClasses.Base {}
@@ -91,8 +97,8 @@ export class OfferEntity extends defaultClasses.TimeStamps {
   })
   public userId!: Ref<UserEntity>;
 
-  @prop({ required: true, type: CoordinatesDto })
-  public coordinates!: Coordinates;
+  @prop({ required: true, type: EntityCoordinates })
+  public coordinates!: EntityCoordinates;
 }
 
 export const OfferModel = getModelForClass(OfferEntity);

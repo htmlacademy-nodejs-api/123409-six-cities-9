@@ -9,14 +9,17 @@
   ],
   "main": "main.js",
   "scripts": {
-    "start": "npm run build && node ./dist/main.rest.js",
-    "start:dev": "nodemon",
-    "build": "npm run clean && npm run compile",
-    "lint": "eslint src/ --ext .ts",
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
+    "build": "npm run clean && npm run compile",
+    "lint": "eslint src/ --ext .ts",
+    "start": "npm run build && node ./dist/main.rest.js",
+    "start:dev": "nodemon",    
     "ts": "tsc --noEmit && node --no-warnings=--no-warnings=ExperimentalWarning --loader ts-node/esm",
-    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost"
+    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123 --host localhost",
+    "cli": "npm run ts ./src/main.cli.ts",
+    "cli:import": "npm run ts ./src/main.cli.ts -- --import",
+    "cli:generate": "npm run ts ./src/main.cli.ts -- --generate"
   },
   "devDependencies": {
     "@types/convict": "6.1.6",

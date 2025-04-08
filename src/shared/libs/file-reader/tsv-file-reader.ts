@@ -47,7 +47,7 @@ export class TSVFileReader extends EventEmitter implements FileReader {
       bedrooms: this.parseToNumber(bedrooms),
       maxAdults: this.parseToNumber(maxAdults),
       price: this.parsePrice(price),
-      comforts: comforts.split(';').map((comfort) => comfort as Comfort),
+      comforts: comforts.split(';') as Comfort[],
       user: this.parseUser(user),
       commentsCount: this.parseToNumber(commentsCount),
       coordinates: coordinates.split(';').map((coordinate) => Number.parseFloat(coordinate)) as Coordinates
@@ -71,6 +71,15 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     return { name, email, avatarPath, type: type as UserType };
   }
 
+  private async processLine(line: string): Promise<void> {
+    if (line.trim()) {
+      const parsedOffer = this.parseLineToOffer(line.trim());
+      await new Promise((resolve) => {
+        this.emit('line', parsedOffer, resolve);
+      });
+    }
+  }
+
   public async read(): Promise<void> {
     const readStream = createReadStream(this.filename, {
       highWaterMark: CHUNK_SIZE,
@@ -78,22 +87,23 @@ export class TSVFileReader extends EventEmitter implements FileReader {
     });
 
     let remainingData = '';
-    let nextLinePosition = -1;
     let importedRowCount = 0;
 
     for await (const chunk of readStream) {
       remainingData += chunk.toString();
-
-      while ((nextLinePosition = remainingData.indexOf('\n')) >= 0) {
-        const completeRow = remainingData.slice(0, nextLinePosition + 1);
-        remainingData = remainingData.slice(++nextLinePosition);
+      let lineEndIndex = remainingData.indexOf('\n');
+      while (lineEndIndex >= 0) {
+        const completeRow = remainingData.slice(0, lineEndIndex);
+        remainingData = remainingData.slice(lineEndIndex + 1);
+        await this.processLine(completeRow);
         importedRowCount++;
-
-        const parsedOffer = this.parseLineToOffer(completeRow);
-        await new Promise((resolve) => {
-          this.emit('line', parsedOffer, resolve);
-        });
+        lineEndIndex = remainingData.indexOf('\n');
       }
+    }
+
+    if (remainingData) {
+      await this.processLine(remainingData);
+      importedRowCount++;
     }
 
     this.emit('end', importedRowCount);

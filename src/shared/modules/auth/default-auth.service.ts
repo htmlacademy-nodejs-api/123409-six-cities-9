@@ -6,7 +6,7 @@ import { AuthService } from './auth-service.interface.js';
 import { Component } from '../../types/index.js';
 import { Logger } from '../../libs/logger/index.js';
 import { LoginUserDto, UserEntity, UserService } from '../user/index.js';
-import type { TokenPayload } from './types/TokenPayload.js';
+import type { TokenPayload } from './types/token-payload.js';
 import { Config, RestSchema } from '../../libs/config/index.js';
 import { JWT_ALGORITHM, JWT_EXPIRED } from './auth.constant.js';
 import { HttpError } from '../../libs/rest/index.js';
